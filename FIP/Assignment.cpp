@@ -6,8 +6,9 @@ using namespace std;
 int opt=0,opt1=0;
 int DOB;
 double runs;
-string Fname,Lname,Uname,Pass,Team1,Team2,Pid; //Player Registeration variables.
+string Fname,Lname,Uname,Pass,Team1,Team2,Pid; //Player Registration variables.
 string UN, PW,USR,PWD; //Login variables.
+    int exitFile(); // function is used to exit the program
 
     void login(); //Login will be the function to approve user permission.
 
@@ -15,7 +16,7 @@ string UN, PW,USR,PWD; //Login variables.
 
     void userReg(); //This function registers Users.
 
-    void dob(); //Date of Birth function which loops until it gets a interger value
+    void dob(); //Date of Birth function which loops until it gets a integer value
 
     void Register_Player(); //This function is called when the user wants to add player details to database
 
@@ -27,7 +28,7 @@ string UN, PW,USR,PWD; //Login variables.
 
 
     int main() {
-        
+
         Menu();
         return 0;
     }
@@ -38,7 +39,7 @@ string UN, PW,USR,PWD; //Login variables.
                 cout<<":::::::: Upcountry Warriors Registration Page ::::::::\n"<<endl;
                 cout<<"Select an option below:\n"<<endl;
 
-                cout<<"1. User Registeration"<<endl;
+                cout<<"1. User Registration"<<endl;
                 cout<<"2. Login"<<endl;
                 cout<<"3. Forgot Password"<<endl;
                 cout<<"4. Exit\n"<<endl;
@@ -51,7 +52,7 @@ string UN, PW,USR,PWD; //Login variables.
                     case 1:
 
                         system("cls");
-                    userReg(); 
+                    userReg();
                     Menu();
 
                     break;
@@ -59,14 +60,14 @@ string UN, PW,USR,PWD; //Login variables.
                     case 2:
 
                         system("cls");
-                    login(); 
-                    User_Menu(); 
+                    login();
+                    User_Menu();
 
                     break;
 
                     case 3:
                         system("cls");
-                        Forgot_Password(); 
+                        Forgot_Password();
                         Menu();
 
                     break;
@@ -75,7 +76,7 @@ string UN, PW,USR,PWD; //Login variables.
                     system("cls");
                         cout<<"Exiting the Program...\nThank You\n";
                     system("pause");
-                    exit(0);
+                    exitFile();
 
                     default: {
                         if (cin.fail() || opt>4 || opt<1){
@@ -91,13 +92,28 @@ string UN, PW,USR,PWD; //Login variables.
         }
 
         void userReg(){
+            string CheckUname;
 
+    
     cout<<"\n----- Registration Page -----\n\n";
-
+   
     cout<<"4. Please choose your username: ";
     cin>>Uname;
     cout<<"\n";
-
+    
+    ifstream File("Credentials.txt"); //User Integrity Checking - Users can register with only one username.
+    if(File.is_open()){
+        while (File>>CheckUname){
+            if (CheckUname==Uname){
+                cout<<"Username already exits\n"<<"Try again.\n\n"<<"Redirecting to main menu\n"<<endl;
+                system("pause");
+                system("cls");
+                File.close();
+                Menu();
+            }
+        }
+    }
+    
     cout<<"5. Please choose your password: ";
     cin>>Pass;
 
@@ -111,6 +127,7 @@ string UN, PW,USR,PWD; //Login variables.
 
         system("pause");
         system("cls");
+        
 
         }
 }
@@ -159,8 +176,8 @@ string UN, PW,USR,PWD; //Login variables.
             cout<<"\t\tWelcome [ "<<USR<<" ]"<<"\n\n";
             cout<<"1. Add Player\n";
             cout<<"2. Search Player\n";
-            cout<<"3. Change Team\n";
-            cout<<"4. Change Password\n";
+            cout<<"3. Remove Player\n";
+            cout<<"4. Teams\n";
             cout<<"5. Logout\n";
             cout<<"6. Exit\n\n";
             cout<<"Enter your choice: ";
@@ -202,7 +219,7 @@ string UN, PW,USR,PWD; //Login variables.
                     system("cls");
                 cout<<"Leaving...\nThank You\n";
                 system("pause");
-                exit(0);
+                exitFile();
 
 
                 default: {
@@ -221,6 +238,7 @@ string UN, PW,USR,PWD; //Login variables.
 
         cout<<"\n==== Player Registration ====\n\n";
         cout<<"Please Enter player details below\n\n";
+        
         cout<<"1. Enter player First Name: ";
         cin>>Fname;
         cout<<"\n";
@@ -229,7 +247,7 @@ string UN, PW,USR,PWD; //Login variables.
         cin>>Lname;
         cout<<"\n";
 
-       
+
         dob();
 
         cout<<"\n\n"<<"Profile created successfully.\n"<<endl;
@@ -267,36 +285,53 @@ string UN, PW,USR,PWD; //Login variables.
 
           void Forgot_Password() {
 
-        string UNm,UNm_i,Pswd;
+        string UNm,UNm_input,Pswd,Pswd_input;
         bool check=false;
-        cout<<"---Forgot Your Password ?..---\n\n";
-        cout<<"Please enter your usernanme: ";
-        cin>>UNm_i;
-        
-        ifstream forg;
-        forg.open("Credentials.txt");
+        cout<<"||----|Change Password|----||\n\n";
+        cout<<"1. Please enter your username: ";
+        cin>>UNm_input;
+        cout<<"2. Please enter your new password: ";
+        cin>>Pswd_input;
 
-        while(forg>>UNm>>Pswd) {
-            
-            if (UNm_i==UNm) {
-                check=true;
+    //Using fstream to remove the old password, user name and appending new username and password.
+        ifstream forgt;
+        ofstream temp;
+        forgt.open("Credentials.txt");
+        temp.open("holder.txt"); // Temporary file which will hold all the username and passwords.
+
+        while(forgt>>UNm>>Pswd) {
+
+            if (UNm_input != UNm) {
+             temp << UNm <<"\t"<< Pswd<<endl; //Copies all the username and password to holder.txt (Except the one with the forgotten password)
+             check = true;
                 break;
             }
-            } forg.close();
+            } 
 
         if(check==true) {
-            cout<<"\n\nYour Password is: "<<Pswd<<endl;
-            }
 
-        else { 
+        temp<< UNm_input << "\t" << Pswd_input << endl; //If the username input username found, new password and username is appended
+        
+        forgt.close();
+        temp.close();
+
+        remove("Credentials.txt"); //Old file is removed and holder is renamed as the previous file "Credentials.txt"
+        rename("holder.txt", "Credentials.txt");
+        } 
+
+        else {
             cout << "\n\nUsername not found.\nPlease Register.";
-            }  
+            }
 
         cout<<"\n\n";
 
         int inp;
-                
-                cout<<"1. Register Account\n";
+
+        cout<<"Password changed successfully\n\n";
+        cout<<"Your Username:"<<UNm_input<<endl;
+        cout<<"Your new password:"<<Pswd_input<<endl;
+
+                cout<<"\n1. Register Account\n";
                 cout<<"2. Main Menu\n";
                 cout<<"3. Try Again\n\n";
                 cout<<"Option: ";
@@ -308,7 +343,7 @@ string UN, PW,USR,PWD; //Login variables.
                 system("cls");
                 cout<<"Returning to Main Menu...\n\n";
                 system("Pause");
-                
+
                 Menu();}
 
                 else if (inp==3){
@@ -317,5 +352,7 @@ string UN, PW,USR,PWD; //Login variables.
                 }
 }
 
-    
-      
+    int exitFile(){
+        return 0;
+    }
+
