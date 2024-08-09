@@ -8,7 +8,6 @@ int DOB;
 double runs;
 string Fname,Lname,Uname,Pass,Team1,Team2,Pid; //Player Registration variables.
 string UN, PW,USR,PWD; //Login variables.
-    int exitFile(); // function is used to exit the program
 
     void login(); //Login will be the function to approve user permission.
 
@@ -76,7 +75,7 @@ string UN, PW,USR,PWD; //Login variables.
                     system("cls");
                         cout<<"Exiting the Program...\nThank You\n";
                     system("pause");
-                    exitFile();
+                    exit(0);
 
                     default: {
                         if (cin.fail() || opt>4 || opt<1){
@@ -92,7 +91,8 @@ string UN, PW,USR,PWD; //Login variables.
         }
 
         void userReg(){
-            string CheckUname;
+
+        string CheckUname;
 
     
     cout<<"\n----- Registration Page -----\n\n";
@@ -159,13 +159,13 @@ string UN, PW,USR,PWD; //Login variables.
             }
 
 
-        }Auth.close();
+        }
         if(!counter==true) {
             cerr<<"\n\nInvalid Username or Password!\nPlease Try Again or Use Forgot Password.\n"<<endl;
             system("pause");
             system("cls");
             Menu();
-        }
+        }Auth.close();
     }
 
             void User_Menu() {
@@ -208,8 +208,8 @@ string UN, PW,USR,PWD; //Login variables.
                 break;
 
                 case 5:
-                system("cls");
                 //Logout
+                system("cls");
                 cout<<"Logging out...\n";
                 system("pause");;
                 Menu();
@@ -219,7 +219,7 @@ string UN, PW,USR,PWD; //Login variables.
                     system("cls");
                 cout<<"Leaving...\nThank You\n";
                 system("pause");
-                exitFile();
+                exit(0);
 
 
                 default: {
@@ -285,66 +285,78 @@ string UN, PW,USR,PWD; //Login variables.
 
           void Forgot_Password() {
 
-        string UNm,UNm_input,Pswd,Pswd_input;
-        bool check=false;
+        string UNm,UNm_i,Pswd,Pswd_i;
+        int check=0;
+
         cout<<"||----|Change Password|----||\n\n";
         cout<<"1. Please enter your username: ";
-        cin>>UNm_input;
+        cin>>UNm_i;
+        cout<<"\n"<<endl;
         cout<<"2. Please enter your new password: ";
-        cin>>Pswd_input;
+        cin>>Pswd_i;
 
     //Using fstream to remove the old password, user name and appending new username and password.
         ifstream forgt;
         ofstream temp;
-        forgt.open("Credentials.txt");
-        temp.open("holder.txt"); // Temporary file which will hold all the username and passwords.
+        forgt.open("Credentials.txt", ios::in);
+        temp.open("holder.txt", ios::out); // Temporary file which will hold all the username and passwords.
 
         while(forgt>>UNm>>Pswd) {
 
-            if (UNm_input != UNm) {
+            if (UNm_i != UNm) {
              temp << UNm <<"\t"<< Pswd<<endl; //Copies all the username and password to holder.txt (Except the one with the forgotten password)
-             check = true;
-                break;
+             check = 1;
+
             }
-            } 
 
-        if(check==true) {
+            else if (UNm_i == UNm) {
+                check=1;
+            }
+            }
 
-        temp<< UNm_input << "\t" << Pswd_input << endl; //If the username input username found, new password and username is appended
+       if(check==1) {
+
+        temp<< UNm_i << "\t" << Pswd_i << endl; //If the username input username found, new password and username is appended
         
         forgt.close();
         temp.close();
 
         remove("Credentials.txt"); //Old file is removed and holder is renamed as the previous file "Credentials.txt"
         rename("holder.txt", "Credentials.txt");
+
+        cout<<"Password changed successfully\n\n";
+        cout<<"Your Username:"<<UNm_i<<endl;
+        cout<<"Your new password:"<<Pswd_i<<endl;
         } 
 
-        else {
-            cout << "\n\nUsername not found.\nPlease Register.";
+       if (check==0) {
+             cout << "\n\nUsername not found.\nPlease Register.";
+
             }
 
         cout<<"\n\n";
 
         int inp;
 
-        cout<<"Password changed successfully\n\n";
-        cout<<"Your Username:"<<UNm_input<<endl;
-        cout<<"Your new password:"<<Pswd_input<<endl;
+        
 
                 cout<<"\n1. Register Account\n";
                 cout<<"2. Main Menu\n";
                 cout<<"3. Try Again\n\n";
                 cout<<"Option: ";
                 cin>>inp;
-                if (inp==1){system("cls");
-                userReg();}
+                if (inp==1){
+                system("cls");
+                userReg();
+                }
 
                 else if (inp==2){
                 system("cls");
                 cout<<"Returning to Main Menu...\n\n";
                 system("Pause");
 
-                Menu();}
+                Menu();
+                }
 
                 else if (inp==3){
                     system("cls");
@@ -352,7 +364,5 @@ string UN, PW,USR,PWD; //Login variables.
                 }
 }
 
-    int exitFile(){
-        return 0;
-    }
+    
 
