@@ -6,7 +6,7 @@ using namespace std;
 int opt=0,opt1=0;
 int DOB;
 double runs;
-string Fname,Lname,Uname,Pass,Team1,Team2,Pid; //Player Registration variables.
+string Fname,Lname,Uname,Pass,Team1,Team2,Pid,RUN_S; //Player Registration variables.
 string UN, PW,USR,PWD; //Login variables.
 
     void login(); //Login will be the function to approve user permission.
@@ -20,6 +20,8 @@ string UN, PW,USR,PWD; //Login variables.
     void Register_Player(); //This function is called when the user wants to add player details to database
 
     void User_Menu(); //This function will be called when user logs in.
+
+    void search();
 
     void Forgot_Password(); //This function is called when user forgets their password.
 
@@ -52,7 +54,7 @@ string UN, PW,USR,PWD; //Login variables.
 
                         system("cls");
                     userReg();
-                    Menu();
+                    
 
                     break;
 
@@ -97,7 +99,7 @@ string UN, PW,USR,PWD; //Login variables.
     
     cout<<"\n----- Registration Page -----\n\n";
    
-    cout<<"4. Please choose your username: ";
+    cout<<"1. Please choose your username: ";
     cin>>Uname;
     cout<<"\n";
     
@@ -114,7 +116,7 @@ string UN, PW,USR,PWD; //Login variables.
         }
     }
     
-    cout<<"5. Please choose your password: ";
+    cout<<"2. Please choose your password: ";
     cin>>Pass;
 
         //Saving login details into Credentials.txt
@@ -155,6 +157,7 @@ string UN, PW,USR,PWD; //Login variables.
                 counter = true;
                 system("cls");
                 User_Menu();
+                cout<<"\nLogin Successful!\n\n"<<endl;
                 break;
             }
 
@@ -166,18 +169,18 @@ string UN, PW,USR,PWD; //Login variables.
             system("cls");
             Menu();
         }Auth.close();
+
     }
 
             void User_Menu() {
 
-        cout<<"\nLogin Successful!\n\n"<<endl;
         for(;;){
 
             cout<<"\t\tWelcome [ "<<USR<<" ]"<<"\n\n";
-            cout<<"1. Add Player\n";
+            cout<<"1. Add New Player\n";
             cout<<"2. Search Player\n";
             cout<<"3. Remove Player\n";
-            cout<<"4. Teams\n";
+            cout<<"4. Manage Teams\n";
             cout<<"5. Logout\n";
             cout<<"6. Exit\n\n";
             cout<<"Enter your choice: ";
@@ -192,8 +195,7 @@ string UN, PW,USR,PWD; //Login variables.
 
                 case 2:
                     system("cls");
-                //Search();
-                cout<<"Change Teams";
+                    search();
                 break;
 
                 case 3:
@@ -237,28 +239,42 @@ string UN, PW,USR,PWD; //Login variables.
                 void Register_Player() {
 
         cout<<"\n==== Player Registration ====\n\n";
-        cout<<"Please Enter player details below\n\n";
+        cout<<"Please Enter Player details below\n\n";
         
-        cout<<"1. Enter player First Name: ";
+        cout<<"1. Enter Player First Name: ";
         cin>>Fname;
         cout<<"\n";
 
-        cout<<"2. Enter player Last Name: ";
+        cout<<"2. Enter Player Last Name: ";
         cin>>Lname;
         cout<<"\n";
 
 
         dob();
 
-        cout<<"\n\n"<<"Profile created successfully.\n"<<endl;
+        cout<<"\n4. Enter Team one's Name: ";
+        cin>>Team1;
+        cout<<"\n";
+
+        cout<<"5. Enter Team two's Name: ";
+        cin>>Team2;
+        cout<<"\n";
+
+
+        cout<<"6. Enter runs scored by player: ";
+        cin>>RUN_S;
+        cout<<"\n";
 
         PID();
 
+        cout<<"\n\n"<<"Profile created successfully.\n"<<endl;
+
+
         //Saving User Details into Database.txt
         {
-            string data[8] = {Pid,Fname,Lname,to_string(DOB)};
+            string data[7] = {Pid,Fname,Lname,to_string(DOB),Team1,Team2,RUN_S};
             ofstream DataSave ("Database.txt", ios::app);
-            DataSave<<data[0]<<"\t"<<data[1]<<"\t"<<data[2]<<"\t"<<data[3]<<endl;
+            DataSave<<data[0]<<"\t"<<data[1]<<"\t"<<data[2]<<"\t"<<data[3]<<"\t"<<data[4]<<"\t"<<data[5]<<"\t"<<data[6]<<endl;
             cout<<"User details saved successfully.\n\n";
             DataSave.close();
         }
@@ -270,7 +286,8 @@ string UN, PW,USR,PWD; //Login variables.
 
     }
 
-                    void dob() {while (true) {
+                    void dob() {
+                        while (true) {
     cout<<"3. Enter player Date of Birth (DDMMYYYY): ";
     cin>>DOB;
     if (cin.fail()) {
@@ -281,7 +298,25 @@ string UN, PW,USR,PWD; //Login variables.
     else { break; }
 }}
 
-                    void PID() { }
+                    void PID() {
+
+                        string CheckPID;
+
+                        cout<<"\nEnter Player Registration Number: ";
+                        cin>>Pid;
+                        ifstream DB("Database.txt"); //User Integrity Checking - Users can register with only one Player Registration Number.
+                        if(DB.is_open()){
+                        while (DB>>CheckPID){
+                        if (CheckPID==Pid){
+                        cout<<"\nPlayer Registration Number already exits\n"<<"Try again.\n\n"<<"Redirecting to menu\n"<<endl;
+                        system("pause");
+                        system("cls");
+                        DB.close();
+                        User_Menu();
+                        }
+                        }
+                        }
+                        }
 
           void Forgot_Password() {
 
@@ -364,5 +399,61 @@ string UN, PW,USR,PWD; //Login variables.
                 }
 }
 
+                void search () {
+                    string P_ID, ID, P_Fname, P_Lname, dob, P_age, team_1, team_2,runs;
+                    int check, check2;
+
+                    cout<<"\n\t[:..:Search Player:..:]\n\n";
+                    cout<<"\nPlease Enter Player Registration Number: ";
+                    cin>>ID;
+
+                    ifstream db;
+                    db.open("Database.txt", ios::in);
+                    if (db.is_open()) {
+                        
+                        check=1;
+                        while(db>>P_ID>>P_Fname>>P_Lname>>dob>>team_1>>team_2>>runs){
+                            if (P_ID==ID){
+                                check2=1;
+
+                                cout<<"\n\tDisplaying Player Details\n\n";
+                                
+                                cout<<") Player Full Name: "<<P_Fname<<" "<<P_Lname<<endl;
+                                cout<<"\n) Player Date Of Birth: "<<dob<<endl;
+                                cout<<"\n) Participating Teams: "<<team_1<<","<<team_2<<endl;
+                                cout<<"\n) Total Runs Scored: "<<runs<<endl;
+                                cout<<"\n";
+
+                                system("pause");
+                                system("cls");
+
+                                
+                            }
+                            
+                            }
+
+                            if (check2!=1) {
+                                cerr<<"\nPlayer Not Found\nPlease Register Player"<<endl;
+                                cout<<"\nRedirecting to Menu...\n";
+                                db.close();
+                                system("pause");
+                                system("cls");
+                                
+                                User_Menu();
+                            }
+                         }
+
+                    if (check==0){
+                                
+                                cerr<<"Error while opening file\nTry again or Restart\n\nRedirecting to menu..\n"<<endl;
+                                db.close();
+                                system("pause");
+                                system("cls");
+                                
+                                User_Menu();
+                            }
+                          
+                }
+                
     
 
