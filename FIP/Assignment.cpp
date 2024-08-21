@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <strings.h>
 
 using namespace std;
 
@@ -263,16 +264,18 @@ string TeamID,Team; //Team Creation Variables.
         cin>>Team1;
         cout<<"\n";
 
-        cout<<"5. Enter Team two's Name: ";
+        cout<<"5. Enter Team two's Name (No to skip): ";
         cin>>Team2;
         cout<<"\n"; 
 
         ifstream TeamD("Team.txt"); //Team Integrity Checking - Users can enter only one Team.
-        string Tname1,Tname2;       
+        string Tname1;      
+        bool check=false; 
+        int x;
 
                     if(TeamD.is_open()){
-
-                    while (TeamD>>Tname1>>Tname2){
+                        
+                    while (TeamD>>Tname1){
 
                     if (Tname1!=Team1){
 
@@ -281,17 +284,37 @@ string TeamID,Team; //Team Creation Variables.
                     system("cls");
                     TeamD.close();
                     User_Menu();
-                    cout<<"DONE";
+                    }break;
+
+                  
+                    
+
                     }
                     }
+                    else if(!TeamD.is_open()){
+                    cout<<"Teams has'nt been created yet\nPlease create Teams";
+                    cout<<"\n\n1. Create Teams\n";
+                    cout<<"2.Return to Menu\n\n";
+                    cout<<"choice: ";
+                    cin>> x;
+
+                    if (x==1)
+                    {system("cls");
+                        Create_T();
                     }
+
+                    }
+                    else if (x==2)
+                    {   system("cls");
+                        User_Menu();
+                        }
 
 
 
         cout<<"6. Enter runs scored by player ";
-        cout<<"\t\nTeam 1: ";
+        cout<<"\nTeam 1: ";
         cin>>RUN_1;
-        cout<<"\tTeam 2: ";
+        cout<<"Team 2: ";
         cin>>RUN_2;
         cout<<"\n";
 
@@ -430,7 +453,8 @@ string TeamID,Team; //Team Creation Variables.
 }
 
                 void search () {
-                    string P_ID, ID, P_Fname, P_Lname, dob, P_age, team_1, team_2,runs;
+                    string P_ID, ID, P_Fname, P_Lname, dob, P_age, team_1, team_2;
+                    int runs1, runs2;
                     int check, check2;
 
                     cout<<"\n\t[:..:Search Player:..:]\n\n";
@@ -442,7 +466,7 @@ string TeamID,Team; //Team Creation Variables.
                     if (db.is_open()) {
                         
                         check=1;
-                        while(db>>P_ID>>P_Fname>>P_Lname>>dob>>team_1>>team_2>>runs){
+                        while(db>>P_ID>>P_Fname>>P_Lname>>dob>>team_1>>team_2>>runs1>>runs2){
                             if (P_ID==ID){
                                 check2=1;
 
@@ -451,7 +475,7 @@ string TeamID,Team; //Team Creation Variables.
                                 cout<<") Player Full Name: "<<P_Fname<<" "<<P_Lname<<endl;
                                 cout<<"\n) Player Date Of Birth: "<<dob<<endl;
                                 cout<<"\n) Participating Teams: "<<team_1<<","<<team_2<<endl;
-                                cout<<"\n) Total Runs Scored: "<<runs<<endl;
+                                cout<<"\n) Total Runs Scored: "<<runs2+runs2<<endl;
                                 cout<<"\n";
 
                                 system("pause");
