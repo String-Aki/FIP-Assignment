@@ -5,9 +5,11 @@ using namespace std;
 
 int opt=0,opt1=0;
 int DOB;
-double runs;
-string Fname,Lname,Uname,Pass,Team1,Team2,Pid,RUN_S; //Player Registration variables.
+// double runs;
+string UsrsNme,Nme;
+string Fname,Lname,Uname,Pass,Team1,Team2,Pid,RUN_1,RUN_2; //Player Registration variables.
 string UN, PW,USR,PWD; //Login variables.
+string TeamID,Team; //Team Creation Variables.
 
     void login(); //Login will be the function to approve user permission.
 
@@ -19,9 +21,13 @@ string UN, PW,USR,PWD; //Login variables.
 
     void Register_Player(); //This function is called when the user wants to add player details to database
 
-    void User_Menu(); //This function will be called when user logs in.
+    void search(); //Used to search players using Player Registration number.
 
-    void search();
+    void Create_T(); //Displays all the players in the team.
+
+    void team(); // Manage Teams 
+
+    void User_Menu(); //This function will be called when user logs in.
 
     void Forgot_Password(); //This function is called when user forgets their password.
 
@@ -31,6 +37,7 @@ string UN, PW,USR,PWD; //Login variables.
     int main() {
 
         Menu();
+        
         return 0;
     }
 
@@ -98,8 +105,12 @@ string UN, PW,USR,PWD; //Login variables.
 
     
     cout<<"\n----- Registration Page -----\n\n";
+
+    cout<<"1. Please Enter Your Name: ";
+    cin>>UsrsNme;
+    cout<<"\n";
    
-    cout<<"1. Please choose your username: ";
+    cout<<"2. Please choose your username: ";
     cin>>Uname;
     cout<<"\n";
     
@@ -116,13 +127,15 @@ string UN, PW,USR,PWD; //Login variables.
         }
     }
     
-    cout<<"2. Please choose your password: ";
+    cout<<"3. Please choose your password: ";
     cin>>Pass;
 
+    
+
         //Saving login details into Credentials.txt
-        {string Cred[2]={Uname,Pass};
+        {string Cred[3]={Uname,Pass,UsrsNme};
         ofstream AuthSave ("Credentials.txt", ios::app);
-        AuthSave<<Cred[0]<<"\t"<<Cred[1]<<endl;
+        AuthSave<<Cred[0]<<"\t"<<Cred[1]<<"\t"<<Cred[2]<<endl;
 
         cout<<"\n\nAccount Registered Successfully.\n"<<endl;
         AuthSave.close();
@@ -152,7 +165,7 @@ string UN, PW,USR,PWD; //Login variables.
         if(!Auth.is_open()) {cerr<<"\n\nFile doesn't exist/couldn't be opened...";}
 
 
-        while(Auth>>UN>>PW) {
+        while(Auth>>UN>>PW>>Nme) {
             if(USR==UN && PW==PWD) {
                 counter = true;
                 system("cls");
@@ -176,13 +189,12 @@ string UN, PW,USR,PWD; //Login variables.
 
         for(;;){
 
-            cout<<"\t\tWelcome [ "<<USR<<" ]"<<"\n\n";
+            cout<<"\t\tWelcome [ "<<Nme<<" ]"<<"\n\n";
             cout<<"1. Add New Player\n";
             cout<<"2. Search Player\n";
-            cout<<"3. Remove Player\n";
-            cout<<"4. Manage Teams\n";
-            cout<<"5. Logout\n";
-            cout<<"6. Exit\n\n";
+            cout<<"3. Manage Teams\n";
+            cout<<"4. Logout\n";
+            cout<<"5. Exit\n\n";
             cout<<"Enter your choice: ";
             cin>>opt1;
 
@@ -200,16 +212,11 @@ string UN, PW,USR,PWD; //Login variables.
 
                 case 3:
                     system("cls");
-                //Change_Team();
+                    team();
 
                 break;
 
                 case 4:
-                    // change_password();
-                    cout<<"Change password";
-                break;
-
-                case 5:
                 //Logout
                 system("cls");
                 cout<<"Logging out...\n";
@@ -217,7 +224,7 @@ string UN, PW,USR,PWD; //Login variables.
                 Menu();
                 break;
 
-                case 6:
+                case 5:
                     system("cls");
                 cout<<"Leaving...\nThank You\n";
                 system("pause");
@@ -252,17 +259,40 @@ string UN, PW,USR,PWD; //Login variables.
 
         dob();
 
-        cout<<"\n4. Enter Team one's Name: ";
+       cout<<"\n4. Enter Team one's Name: ";
         cin>>Team1;
         cout<<"\n";
 
         cout<<"5. Enter Team two's Name: ";
         cin>>Team2;
-        cout<<"\n";
+        cout<<"\n"; 
+
+        ifstream TeamD("Team.txt"); //Team Integrity Checking - Users can enter only one Team.
+        string Tname1,Tname2;       
+
+                    if(TeamD.is_open()){
+
+                    while (TeamD>>Tname1>>Tname2){
+
+                    if (Tname1!=Team1){
+
+                    cout<<"\nTeam 1 doesn't exits\n"<<"Try again.\n\n"<<"Redirecting to main menu\n"<<endl;
+                    system("pause");
+                    system("cls");
+                    TeamD.close();
+                    User_Menu();
+                    cout<<"DONE";
+                    }
+                    }
+                    }
 
 
-        cout<<"6. Enter runs scored by player: ";
-        cin>>RUN_S;
+
+        cout<<"6. Enter runs scored by player ";
+        cout<<"\t\nTeam 1: ";
+        cin>>RUN_1;
+        cout<<"\tTeam 2: ";
+        cin>>RUN_2;
         cout<<"\n";
 
         PID();
@@ -272,9 +302,9 @@ string UN, PW,USR,PWD; //Login variables.
 
         //Saving User Details into Database.txt
         {
-            string data[7] = {Pid,Fname,Lname,to_string(DOB),Team1,Team2,RUN_S};
+            string data[8] = {Pid,Fname,Lname,to_string(DOB),Team1,Team2,RUN_1,RUN_2};
             ofstream DataSave ("Database.txt", ios::app);
-            DataSave<<data[0]<<"\t"<<data[1]<<"\t"<<data[2]<<"\t"<<data[3]<<"\t"<<data[4]<<"\t"<<data[5]<<"\t"<<data[6]<<endl;
+            DataSave<<data[0]<<"\t"<<data[1]<<"\t"<<data[2]<<"\t"<<data[3]<<"\t"<<data[4]<<"\t"<<data[5]<<"\t"<<data[6]<<"\t"<<data[7]<<endl;
             cout<<"User details saved successfully.\n\n";
             DataSave.close();
         }
@@ -455,5 +485,86 @@ string UN, PW,USR,PWD; //Login variables.
                           
                 }
                 
-    
+                void team () {
+                    int swt;
 
+                    cout<<"//// Team Management ////\n\n";
+
+                    cout<<"1. Create Teams"<<endl;
+                    cout<<"2. List Teams"<<endl;
+                    cout<<"3. Return to menu\n"<<endl;
+
+                    cout<<"Choice: ";
+                    cin>>swt;
+
+                    
+
+                    switch(swt){
+
+                        case 1: 
+                        {
+                            system("cls");
+                            Create_T();
+                               
+                        }
+                        break;
+                        case 2:
+                        {
+                            // List_T();
+                        }
+                        break;
+
+                        case 3:
+                        {
+                            User_Menu();
+                        }
+
+                        default: 
+                        {
+                            cout<<"Invalid Entry, Try again..";
+                        }
+                        
+                    }
+                }
+
+                void Create_T()
+                {
+                    string ID;
+
+                    cout<< "\nCreate Team\n\n";
+
+                    cout<<"Enter Team name: ";
+                    cin>>Team;
+
+                    cout<<"\n";
+
+                    cout<<"Enter Team ID: ";
+                    cin>>TeamID;
+
+                    ifstream TeamC("Team.txt"); //Team Integrity Checking - Users can enter only one Team.
+                    
+                    if(TeamC.is_open()){
+
+                    while (TeamC>>ID){
+
+                    if (ID==Team){
+
+                    cout<<"\nTeam already exits\n"<<"Try again.\n\n"<<"Redirecting to main menu\n"<<endl;
+                    system("pause");
+                    system("cls");
+                    TeamC.close();
+                    User_Menu();
+
+                }
+                }
+                }
+                ofstream team ("Team.txt",ios::app);
+                    team <<Team<<"\t"<<TeamID<<endl;
+                    cout<<"\nTeam Created Successfully\n";
+                    system("pause");
+                    system("cls");
+                }
+
+                 
+                   
+                
