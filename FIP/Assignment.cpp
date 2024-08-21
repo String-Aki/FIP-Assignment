@@ -10,7 +10,7 @@ int DOB;
 string UsrsNme,Nme;
 string Fname,Lname,Uname,Pass,Team1,Team2,Pid,RUN_1,RUN_2; //Player Registration variables.
 string UN, PW,USR,PWD; //Login variables.
-string TeamID,Team; //Team Creation Variables.
+string Team,TeamID; //Team Creation Variables.
 
     void login(); //Login will be the function to approve user permission.
 
@@ -25,6 +25,8 @@ string TeamID,Team; //Team Creation Variables.
     void search(); //Used to search players using Player Registration number.
 
     void Create_T(); //Displays all the players in the team.
+
+    void List_T();
 
     void team(); // Manage Teams 
 
@@ -279,7 +281,7 @@ string TeamID,Team; //Team Creation Variables.
 
                     if (Tname1!=Team1){
 
-                    cout<<"\nTeam 1 doesn't exits\n"<<"Try again.\n\n"<<"Redirecting to main menu\n"<<endl;
+                    cout<<"\nTeam 1 doesn't exits\n"<<"Create Team and Try again.\n\n"<<"Redirecting to main menu\n"<<endl;
                     system("pause");
                     system("cls");
                     TeamD.close();
@@ -373,15 +375,18 @@ string TeamID,Team; //Team Creation Variables.
 
           void Forgot_Password() {
 
-        string UNm,UNm_i,Pswd,Pswd_i;
+        string UNm,UNm_i,Pswd,Pswd_i,tempc;
         int check=0;
-
+        cout<<"NOTICE !! Please Restart Program Before Changing Password !!\n\n";
         cout<<"||----|Change Password|----||\n\n";
         cout<<"1. Please enter your username: ";
         cin>>UNm_i;
         cout<<"\n"<<endl;
         cout<<"2. Please enter your new password: ";
         cin>>Pswd_i;
+        cout<<"\n"<<endl;
+        cout<<"3. Enter Your Name: ";
+        cin>>UsrsNme;
 
     //Using fstream to remove the old password, user name and appending new username and password.
         ifstream forgt;
@@ -389,10 +394,10 @@ string TeamID,Team; //Team Creation Variables.
         forgt.open("Credentials.txt", ios::in);
         temp.open("holder.txt", ios::out); // Temporary file which will hold all the username and passwords.
 
-        while(forgt>>UNm>>Pswd) {
+        while(forgt>>UNm>>Pswd>>tempc) {
 
             if (UNm_i != UNm) {
-             temp << UNm <<"\t"<< Pswd<<endl; //Copies all the username and password to holder.txt (Except the one with the forgotten password)
+             temp <<UNm <<"\t"<< Pswd<<"\t"<<tempc<<endl; //Copies all the username and password to holder.txt (Except the one with the forgotten password)
              check = 1;
 
             }
@@ -404,17 +409,18 @@ string TeamID,Team; //Team Creation Variables.
 
        if(check==1) {
 
-        temp<< UNm_i << "\t" << Pswd_i << endl; //If the username input username found, new password and username is appended
+        temp<<UNm_i << "\t" << Pswd_i<<"\t"<<UsrsNme << endl; //If the username input username found, new password and username is appended
         
         forgt.close();
         temp.close();
 
         remove("Credentials.txt"); //Old file is removed and holder is renamed as the previous file "Credentials.txt"
         rename("holder.txt", "Credentials.txt");
-
+        
         cout<<"Password changed successfully\n\n";
         cout<<"Your Username:"<<UNm_i<<endl;
         cout<<"Your new password:"<<Pswd_i<<endl;
+
         } 
 
        if (check==0) {
@@ -534,7 +540,7 @@ string TeamID,Team; //Team Creation Variables.
                         break;
                         case 2:
                         {
-                            // List_T();
+                            List_T();
                         }
                         break;
 
@@ -565,6 +571,7 @@ string TeamID,Team; //Team Creation Variables.
                     cout<<"Enter Team ID: ";
                     cin>>TeamID;
 
+
                     ifstream TeamC("Team.txt"); //Team Integrity Checking - Users can enter only one Team.
                     
                     if(TeamC.is_open()){
@@ -589,6 +596,21 @@ string TeamID,Team; //Team Creation Variables.
                     system("cls");
                 }
 
-                 
+                void List_T(){
+                    string teamName,ID;
+                    int i=1;
+                    cout<<"\n\tList Of All Teams\n\n";
+                    ifstream list ("Team.txt",ios::in);
+                    while(list>>teamName>>ID){
+                    
+                
+                    cout<<i<<"\t"<<teamName<<endl;
+                    i++;
+                    
+                }
+                system("\npause");
+                system("cls");
+                }
+                
                    
                 
