@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <strings.h>
+#include <sstream>
 
 using namespace std;
 
@@ -24,9 +25,9 @@ string Team,TeamID; //Team Creation Variables.
 
     void search(); //Used to search players using Player Registration number.
 
-    void Create_T(); //Displays all the players in the team.
-
-    void List_T();
+    void Create_T(); //Creates new teams.
+    
+    void List_T(); //Lists all existing teams.
 
     void team(); // Manage Teams 
 
@@ -193,11 +194,13 @@ string Team,TeamID; //Team Creation Variables.
         for(;;){
 
             cout<<"\t\tWelcome [ "<<Nme<<" ]"<<"\n\n";
+            
             cout<<"1. Add New Player\n";
             cout<<"2. Search Player\n";
             cout<<"3. Manage Teams\n";
             cout<<"4. Logout\n";
             cout<<"5. Exit\n\n";
+            cout<<"Create a team before registering a player.\n\n";
             cout<<"Enter your choice: ";
             cin>>opt1;
 
@@ -326,8 +329,11 @@ string Team,TeamID; //Team Creation Variables.
 
 
         //Saving User Details into Database.txt
-        {
-            string data[8] = {Pid,Fname,Lname,to_string(DOB),Team1,Team2,RUN_1,RUN_2};
+        {string Dob;
+        stringstream dob;
+        dob <<DOB;
+        Dob= dob.str();
+            string data[8] = {Pid,Fname,Lname,Dob,Team1,Team2,RUN_1,RUN_2};
             ofstream DataSave ("Database.txt", ios::app);
             DataSave<<data[0]<<"\t"<<data[1]<<"\t"<<data[2]<<"\t"<<data[3]<<"\t"<<data[4]<<"\t"<<data[5]<<"\t"<<data[6]<<"\t"<<data[7]<<endl;
             cout<<"User details saved successfully.\n\n";
@@ -460,7 +466,7 @@ string Team,TeamID; //Team Creation Variables.
 
                 void search () {
                     string P_ID, ID, P_Fname, P_Lname, dob, P_age, team_1, team_2;
-                    int runs1, runs2;
+                    double runs1, runs2;
                     int check, check2;
 
                     cout<<"\n\t[:..:Search Player:..:]\n\n";
@@ -481,7 +487,7 @@ string Team,TeamID; //Team Creation Variables.
                                 cout<<") Player Full Name: "<<P_Fname<<" "<<P_Lname<<endl;
                                 cout<<"\n) Player Date Of Birth: "<<dob<<endl;
                                 cout<<"\n) Participating Teams: "<<team_1<<","<<team_2<<endl;
-                                cout<<"\n) Total Runs Scored: "<<runs2+runs2<<endl;
+                                cout<<"\n) Total Runs Scored: "<<runs1+runs2<<endl;
                                 cout<<"\n";
 
                                 system("pause");
@@ -539,13 +545,17 @@ string Team,TeamID; //Team Creation Variables.
                         }
                         break;
                         case 2:
-                        {
+                        {   
+                            
+                            system("cls");
                             List_T();
+                            system("pause");
+                            system("cls");
                         }
                         break;
 
                         case 3:
-                        {
+                        {   system("cls");
                             User_Menu();
                         }
 
@@ -557,7 +567,7 @@ string Team,TeamID; //Team Creation Variables.
                     }
                 }
 
-                void Create_T()
+                     void Create_T()
                 {
                     string ID;
 
@@ -568,7 +578,7 @@ string Team,TeamID; //Team Creation Variables.
 
                     cout<<"\n";
 
-                    cout<<"Enter Team ID: ";
+                    cout<<"Enter Team ID (01 or 02 only): ";
                     cin>>TeamID;
 
 
@@ -596,7 +606,7 @@ string Team,TeamID; //Team Creation Variables.
                     system("cls");
                 }
 
-                void List_T(){
+                     void List_T(){
                     string teamName,ID;
                     int i=1;
                     cout<<"\n\tList Of All Teams\n\n";
@@ -604,13 +614,12 @@ string Team,TeamID; //Team Creation Variables.
                     while(list>>teamName>>ID){
                     
                 
-                    cout<<i<<"\t"<<teamName<<endl;
+                    cout<<i<<"."<<" "<<teamName<<endl;
                     i++;
+                    cout<<"\n";
                     
                 }
-                system("\npause");
-                system("cls");
+                
                 }
                 
-                   
-                
+                    
